@@ -1,7 +1,9 @@
 export type GameStatus = "scheduled" | "live" | "final";
+export type Sport = "NBA" | "NHL" | "MLB";
 
 export interface Game {
   id: number;
+  sport: Sport;
   home_team: string;
   away_team: string;
   home_score: number;

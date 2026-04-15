@@ -1,5 +1,6 @@
 import { Game } from "@/lib/types";
 import { formatGameTime } from "@/lib/utils/game-status";
+import SportBadge from "./SportBadge";
 
 export default function UpcomingGameCard({ game }: { game: Game }) {
   const timeDisplay = formatGameTime(game);
@@ -23,7 +24,8 @@ export default function UpcomingGameCard({ game }: { game: Game }) {
             <span className="ml-auto text-xl font-bold text-zinc-300 tabular-nums">&mdash;</span>
           </div>
         </div>
-        <div className="ml-4">
+        <div className="ml-4 flex flex-col items-end gap-1.5">
+          <SportBadge sport={game.sport} />
           <span className="text-sm font-medium text-zinc-500">{timeDisplay}</span>
         </div>
       </div>

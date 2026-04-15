@@ -1,5 +1,6 @@
 import { Game } from "@/lib/types";
 import { formatGameTime } from "@/lib/utils/game-status";
+import SportBadge from "./SportBadge";
 
 export default function LiveGameCard({ game }: { game: Game }) {
   const timeDisplay = formatGameTime(game);
@@ -27,7 +28,8 @@ export default function LiveGameCard({ game }: { game: Game }) {
             </span>
           </div>
         </div>
-        <div className="ml-4 flex flex-col items-end">
+        <div className="ml-4 flex flex-col items-end gap-1.5">
+          <SportBadge sport={game.sport} />
           <span className="flex items-center gap-1.5 text-sm font-medium text-red-600">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>

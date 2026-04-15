@@ -1,4 +1,5 @@
 import { Game } from "@/lib/types";
+import SportBadge from "./SportBadge";
 
 export default function CompletedGameCard({ game }: { game: Game }) {
   const awayWon = game.away_score > game.home_score;
@@ -31,8 +32,9 @@ export default function CompletedGameCard({ game }: { game: Game }) {
             </span>
           </div>
         </div>
-        <div className="ml-4">
-          <span className="text-sm font-medium text-zinc-500">Final</span>
+        <div className="ml-4 flex flex-col items-end gap-1.5">
+          <SportBadge sport={game.sport} />
+          <span className="text-sm font-medium text-zinc-500">{game.game_clock || "Final"}</span>
         </div>
       </div>
     </div>
