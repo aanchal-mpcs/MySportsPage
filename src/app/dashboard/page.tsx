@@ -12,7 +12,10 @@ export default async function DashboardPage() {
     const { data } = await supabase.auth.getUser();
     user = data.user;
 
-    const today = new Date().toISOString().split("T")[0];
+    // Use both today and yesterday to handle timezone edge cases
+    const now = new Date();
+    const today = now.toISOString().split("T")[0];
+    const yesterday = new Date(now.getTime() - 86400000).toISOString().split("T")[0];
 
     if (user) {
       const { data: favorites } = await supabase
@@ -23,23 +26,28 @@ export default async function DashboardPage() {
       favoriteAbbrs = favorites?.map((f) => f.team_abbr) ?? [];
     }
 
+    // Fetch games: try today first, fall back to most recent date with games
+    const { data: todayGames } = await supabase
+      .from("nba_games")
+      .select("*")
+      .in("date", [today, yesterday])
+      .order("date", { ascending: false });
+
+    let allGames = (todayGames as Game[]) ?? [];
+
+    // If we have games from multiple dates, prefer the most recent date
+    if (allGames.length > 0) {
+      const latestDate = allGames[0].date;
+      allGames = allGames.filter((g) => g.date === latestDate);
+    }
+
+    // Filter by favorites if logged in with favorites set
     if (favoriteAbbrs.length > 0) {
-      const { data } = await supabase
-        .from("nba_games")
-        .select("*")
-        .eq("date", today)
-        .or(
-          favoriteAbbrs
-            .flatMap((abbr) => [`home_team.eq.${abbr}`, `away_team.eq.${abbr}`])
-            .join(",")
-        );
-      games = (data as Game[]) ?? [];
+      games = allGames.filter(
+        (g) => favoriteAbbrs.includes(g.home_team) || favoriteAbbrs.includes(g.away_team)
+      );
     } else {
-      const { data } = await supabase
-        .from("nba_games")
-        .select("*")
-        .eq("date", today);
-      games = (data as Game[]) ?? [];
+      games = allGames;
     }
   } catch {
     // Supabase client failed — render with empty state
